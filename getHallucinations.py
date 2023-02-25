@@ -33,7 +33,6 @@ def preprocess_text(text):
     processed_text = ' '.join(words)
     
     # Convert the processed text into a TF-IDF matrix
-    # vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform([processed_text])
     
     return tfidf_matrix
@@ -57,6 +56,29 @@ def classify_response(response_text):
     
     # Return the response classification
     return response_class
+
+# Define a function to identify speech acts and response attribution classes in a response
+def identify_speech_act_and_response_class(response_text):
+    # Classify the response as hallucinated or not
+    response_class = classify_response(response_text)
+    
+    # Tokenize the response text into words
+    words = word_tokenize(response_text.lower())
+    
+    # Identify the speech act of the response
+    if '?' in response_text:
+        speech_act = 'question'
+    elif 'thank' in words or 'thanks' in words:
+        speech_act = 'acknowledgment'
+    else:
+        speech_act = 'disclosure'
+    
+    # Identify the response attribution class
+    if response_class == 'hallucinated':
+        response_attrib_class = 'hallucination'
+    else:
+        response_attrib_class = 'entailment'
+
 
 # Example usage
 response_text = "I had a dream that I could fly"
